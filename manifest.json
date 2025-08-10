@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Fullscreen Clock",
+  "version": "1.0",
+  "description": "Displays time in fullscreen mode.",
+  "permissions": ["activeTab", "scripting"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Toggle Fullscreen Clock"
+  },
+  "icons": {
+    "128": "icon.png"
+  }
+}

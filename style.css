@@ -1,0 +1,14 @@
+#fullscreen-clock {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 24px;
+  font-family: sans-serif;
+  padding: 6px 12px;
+  border-radius: 6px;
+  z-index: 999999;
+  display: none;
+  user-select: none;
+}
