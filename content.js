@@ -1,18 +1,16 @@
-// Set up clock element if it doesn't exist
-let clock = document.getElementById("fullscreen-clock");
-if (!clock) {
-  clock = document.createElement("div");
-  clock.id = "fullscreen-clock";
-  clock.style.display = "none";
-  document.body.appendChild(clock);
-}
-
 let clockInterval = null;
 
 // Handle fullscreen changes
 document.addEventListener("fullscreenchange", () => {
+  let clock = document.getElementById("fullscreen-clock");
   if (document.fullscreenElement) {
-
+    // Set up clock element if it doesn't exist
+    if (!clock) {
+      clock = document.createElement("div");
+      clock.id = "fullscreen-clock";
+      clock.style.display = "none";
+      document.fullscreenElement.appendChild(clock);
+    }
 
     // Initial update
     const now = new Date();
