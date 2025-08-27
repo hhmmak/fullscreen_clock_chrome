@@ -35,13 +35,18 @@ document.addEventListener("fullscreenchange", () => {
     // Hide clock and stop updates
     clock.style.display = "none";
     clearInterval(clockInterval);
+    clockInterval = null;
   }
 });
 
 // Listen for disable message
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.action === "disable") {
-    clearInterval(clockInterval);
+    if (clockInterval){
+      clearInterval(clockInterval);
+    }
     document.removeEventListener("fullscreenchange", () => {});
+  } else if (msg.action === "enable") {
+    document.addEventListener("fullscreenchange", () => {});
   }
 });

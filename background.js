@@ -31,6 +31,7 @@ chrome.action.onClicked.addListener(async (tab) => {
         target: { tabId: tab.id },
         files: ["content.js"]
       });
+      chrome.tabs.sendMessage(tab.id, { action: "enable" });
     } catch (err) {
       console.error("Error injecting scripts:", err);
     }
