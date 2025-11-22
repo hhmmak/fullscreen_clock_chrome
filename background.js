@@ -1,42 +1,53 @@
-let isEnabled = false; // Global state, OFF by default
+let clockInterval = null;
 
-// Set initial badge text when extension is installed or Chrome starts
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.action.setBadgeText({
-    text: 'OFF'
-  });
-});
-
-chrome.action.onClicked.addListener(async (tab) => {
-  if (!tab.id) return;
-
-  const prevState = await chrome.action.getBadgeText({ tabId: tab.id });
-  // Next state will always be the opposite
-  const nextState = prevState === 'ON' ? 'OFF' : 'ON';
-
-  // Set the action badge to the next state
-  await chrome.action.setBadgeText({
-    tabId: tab.id,
-    text: nextState
-  });
-
-  if (nextState === 'ON') {
-    // Inject styles and script into the active tab
-    try {
-      await chrome.scripting.insertCSS({
-        target: { tabId: tab.id },
-        files: ["style.css"]
-      });
-      await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        files: ["content.js"]
-      });
-      chrome.tabs.sendMessage(tab.id, { action: "enable" });
-    } catch (err) {
-      console.error("Error injecting scripts:", err);
+// Handle fullscreen changes
+const handleFullscreenChange = () => {
+  let clock = document.getElementById("fullscreen-clock");
+  if (document.fullscreenElement) {
+    // Set up clock element if it doesn't exist
+    if (!clock) {
+      clock = document.createElement("div");
+      clock.id = "fullscreen-clock";
+      clock.style.display = "none";
+      document.fullscreenElement.appendChild(clock);
     }
+
+    // Initial update
+    const now = new Date();
+    const dateOptions = {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false
+    }
+    clock.textContent = now.toLocaleString("en-US", dateOptions);
+
+    // Start interval updates
+    if (!clockInterval) {
+      clockInterval = setInterval(() => {
+        const now = new Date();
+        clock.textContent = now.toLocaleString("en-US", dateOptions);
+      }, 5000);
+    }
+
+    // Show clock
+    clock.style.display = "block";
   } else {
-    // Tell the active tab's content script to remove the clock
-    chrome.tabs.sendMessage(tab.id, { action: "disable" });
+    // Hide clock and stop updates
+    clock.style.display = "none";
+    clearInterval(clockInterval);
+    clockInterval = null;
+  }
+};
+
+// Listen for disable message
+chrome.runtime.onMessage.addListener((msg) => {
+  if (msg.action === "disable") {
+    if (clockInterval){
+      clearInterval(clockInterval);
+    }
+    document.removeEventListener("fullscreenchange", () => {});
+  } else {
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
   }
 });
