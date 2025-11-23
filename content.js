@@ -1,7 +1,7 @@
 let clockInterval = null;
 
 // Handle fullscreen changes
-document.addEventListener("fullscreenchange", () => {
+const handleFullscreenChange = () => {
   let clock = document.getElementById("fullscreen-clock");
   if (document.fullscreenElement) {
     // Set up clock element if it doesn't exist
@@ -17,6 +17,7 @@ document.addEventListener("fullscreenchange", () => {
     const dateOptions = {
       hour: "2-digit",
       minute: "2-digit",
+      second: "2-digit",
       hour12: false
     }
     clock.textContent = now.toLocaleString("en-US", dateOptions);
@@ -26,7 +27,7 @@ document.addEventListener("fullscreenchange", () => {
       clockInterval = setInterval(() => {
         const now = new Date();
         clock.textContent = now.toLocaleString("en-US", dateOptions);
-      }, 20000);
+      }, 5000);
     }
 
     // Show clock
@@ -37,7 +38,7 @@ document.addEventListener("fullscreenchange", () => {
     clearInterval(clockInterval);
     clockInterval = null;
   }
-});
+};
 
 // Listen for disable message
 chrome.runtime.onMessage.addListener((msg) => {
@@ -46,7 +47,7 @@ chrome.runtime.onMessage.addListener((msg) => {
       clearInterval(clockInterval);
     }
     document.removeEventListener("fullscreenchange", () => {});
-  } else if (msg.action === "enable") {
-    document.addEventListener("fullscreenchange", () => {});
+  } else {
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
   }
 });
