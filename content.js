@@ -2,6 +2,9 @@
 let clockInterval = null;
 // Track whether seconds should be shown
 let includeSeconds = true;
+let isLargeClock = false;
+let style = ["includeSeconds", "notIncludeSeconds", "largeClock"];
+let styleIndex = 0;
 
 // Helper to build date options based on `includeSeconds`
 const getDateOptions = () => {
@@ -25,8 +28,21 @@ const handleClockClick = () => {
     clockInterval = null;
   }
 
-  // Toggle seconds display
-  includeSeconds = !includeSeconds;
+  // Cycle through styles
+  styleIndex = (styleIndex + 1) % style.length;
+
+
+  if (styleIndex === 0) {
+    includeSeconds = true;
+  } else {
+    includeSeconds = false;
+  }
+
+  if (styleIndex === 2) {
+     isLargeClock = true
+  } else {
+    isLargeClock = false
+  }
 
   // Immediately update displayed time with new options
   const now = new Date();
@@ -38,6 +54,15 @@ const handleClockClick = () => {
     const now = new Date();
     clock.textContent = now.toLocaleString("en-US", getDateOptions());
   }, intervalMs);
+
+  // Update clock styling based on current style
+  if (isLargeClock) {
+    clock.style.fontSize = "10rem";
+    clock.style.color = "#a0a0a0";
+  } else {
+    clock.style.fontSize = "4rem";
+    clock.style.color = "#f0f0f0";
+  }
 };
 
 // Handle fullscreen changes
