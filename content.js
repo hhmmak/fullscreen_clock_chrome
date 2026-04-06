@@ -17,6 +17,15 @@ const getDateOptions = () => {
   return opts;
 };
 
+// Helper to start the clock update interval
+const startClockInterval = (clock) => {
+  const intervalMs = includeSeconds ? 1000 : 5000;
+  clockInterval = setInterval(() => {
+    const now = new Date();
+    clock.textContent = now.toLocaleString("en-US", getDateOptions());
+  }, intervalMs);
+};
+
 // Click handler for the fullscreen clock element
 const handleClockClick = () => {
   const clock = document.getElementById("fullscreen-clock");
@@ -38,10 +47,13 @@ const handleClockClick = () => {
     includeSeconds = false;
   }
 
+  // Adjust clock size
   if (styleIndex === 2) {
-     isLargeClock = true
+    clock.style.fontSize = "10rem";
+    clock.style.color = "#a0a0a0";
   } else {
-    isLargeClock = false
+    clock.style.fontSize = "4rem";
+    clock.style.color = "#f0f0f0";
   }
 
   // Immediately update displayed time with new options
@@ -49,20 +61,7 @@ const handleClockClick = () => {
   clock.textContent = now.toLocaleString("en-US", getDateOptions());
 
   // Restart interval. Use 1s updates when seconds are shown, 5s otherwise (preserve previous behavior)
-  const intervalMs = includeSeconds ? 1000 : 5000;
-  clockInterval = setInterval(() => {
-    const now = new Date();
-    clock.textContent = now.toLocaleString("en-US", getDateOptions());
-  }, intervalMs);
-
-  // Update clock styling based on current style
-  if (isLargeClock) {
-    clock.style.fontSize = "10rem";
-    clock.style.color = "#a0a0a0";
-  } else {
-    clock.style.fontSize = "4rem";
-    clock.style.color = "#f0f0f0";
-  }
+  startClockInterval(clock);
 };
 
 // Handle fullscreen changes
@@ -85,11 +84,7 @@ const handleFullscreenChange = () => {
 
     // Start interval updates
     if (!clockInterval) {
-      const intervalMs = includeSeconds ? 1000 : 5000;
-      clockInterval = setInterval(() => {
-        const now = new Date();
-        clock.textContent = now.toLocaleString("en-US", getDateOptions());
-      }, intervalMs);
+      startClockInterval(clock);
     }
 
     // Show clock
