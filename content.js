@@ -2,7 +2,6 @@
 let clockInterval = null;
 // Track whether seconds should be shown
 let includeSeconds = true;
-let isLargeClock = false;
 let style = ["includeSeconds", "notIncludeSeconds", "largeClock"];
 let styleIndex = 0;
 
